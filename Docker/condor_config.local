@@ -1,0 +1,37 @@
+# HTCondor configuration file
+#
+# Configuration placed into this file extends/overwrites the settings in the
+# main HTCondor configuration at /etc/condor/condor_config.
+# It may be advantagous to leave the main configuration file pristine and put
+# local configuration here to ease configuration updates during upgrades of the
+# HTCondor Debian package. Alternatively, it is also possible to place additional
+# configuration files into /etc/condor/config.d that will take precedence over
+# both the main configuration file and this local configuration. Note that
+# DebConf-generated configuration will overwrite settings in this file.
+
+RESERVED_MEMORY = 6144
+
+NUM_SLOTS = 1 
+NUM_SLOTS_TYPE_1 = 1 
+SLOT_TYPE_1 =  cpus=94% 
+SLOT_TYPE_1_PARTITIONABLE = true
+
+CONDOR_Q_ONLY_MY_JOBS = False
+
+use feature : GPUs
+
+
+# --- PERFORMANCE TUNING SETTINGS ---
+
+# Since there is just one server in this pool, we can tune various
+# polling intervals to be much more responsive than the system defaults
+# (which are tuned for pools with thousands of servers).  This will
+# enable jobs to be scheduled faster, and job monitoring to happen more
+# frequently.
+SCHEDD_INTERVAL = 5
+NEGOTIATOR_INTERVAL = 2
+NEGOTIATOR_CYCLE_DELAY = 5
+STARTER_UPDATE_INTERVAL = 5
+SHADOW_QUEUE_UPDATE_INTERVAL = 10
+UPDATE_INTERVAL = 5
+RUNBENCHMARKS = 0

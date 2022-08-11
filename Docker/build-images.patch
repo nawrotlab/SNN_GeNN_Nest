@@ -1,0 +1,4 @@
+55c55
+<          "el7": "centos:7",
+---
+>          "el7": "nvidia/cuda:11.7.0-devel-centos7",

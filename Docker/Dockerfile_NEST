@@ -1,0 +1,50 @@
+ARG IMAGE=testuser/snn_genn_nest:conda
+FROM $IMAGE
+
+ARG NEST_VERSION=3.3
+ARG SRC_PATH=/tmp
+RUN yum makecache && \
+      yum install --assumeyes \
+        patch \
+        libtool-ltdl \
+        gsl-devel && \
+      yum clean all
+
+RUN conda install -c conda-forge pathos && conda clean -afy
+# Install NEST
+COPY pathlib-nest-3.3.patch  ${SRC_PATH}
+RUN wget  https://github.com/nest/nest-simulator/archive/refs/tags/v${NEST_VERSION}.tar.gz -P ${SRC_PATH} && \
+    cd ${SRC_PATH} && tar -xzf v${NEST_VERSION}.tar.gz && ls -l && \
+    cp pathlib-nest-3.3.patch ${SRC_PATH}/nest-simulator-${NEST_VERSION}/ && \
+    cd ${SRC_PATH}/nest-simulator-${NEST_VERSION}/ && patch -p1 --verbose < pathlib-nest-3.3.patch && \
+    python3 -m pip install -r ${SRC_PATH}/nest-simulator-${NEST_VERSION}/doc/requirements.txt
+
+RUN mkdir nest-build && cd nest-build && \
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=/opt/nest \
+          -Dwith-warning=ON \
+          -Dwith-boost=ON \
+          -Dwith-ltdl=ON \
+          -Dwith-gsl=ON \
+          -Dwith-readline=OFF \
+          -Dwith-python=ON \
+          -Dwith-mpi=OFF \
+          -Dwith-openmp=ON \
+          -DPYTHON_EXECUTABLE=/opt/conda/bin/python3 \
+          -DPYTHON_LIBRARY=/opt/conda/lib/libpython3.8.so \
+          -DPYTHON_INCLUDE_DIR=/opt/conda/include/python3.8 \
+          ${SRC_PATH}/nest-simulator-${NEST_VERSION} && \
+    make -j 8  && \
+    make install && \
+    rm -rf ${SRC_PATH}/nest-simulator-${NEST_VERSION} && rm ${SRC_PATH}/v${NEST_VERSION}.tar.gz && \
+    rm ${SRC_PATH}/pathlib-nest-3.3.patch && rm -rf /nest-build
+
+RUN echo "source /opt/nest/bin/nest_vars.sh" >> /etc/bashrc
+
+
+
+
+
+
+
+
+

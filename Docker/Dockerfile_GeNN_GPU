@@ -1,0 +1,14 @@
+ARG IMAGE=testuser/snn_genn_nest:conda
+FROM $IMAGE
+ENV CUDA_PATH=/usr/local/cuda
+RUN cd opt && git clone https://github.com/genn-team/genn.git && export PATH=/opt/genn/bin
+RUN source /opt/rh/devtoolset-9/enable & cd /opt/genn && make DYNAMIC=1 LIBRARY_DIRECTORY=`pwd`/pygenn/genn_wrapper && python3 setup.py develop
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,53 @@
+ARG IMAGE=local/htcondor:mini
+FROM $IMAGE as base
+
+RUN yum makecache && \
+      yum install --assumeyes \
+        git \
+        swig3 \
+        wget \
+        python3-devel \
+        git \
+        make \
+        libjpeg-turbo-devel \
+        zlib-devel \
+        centos-release-scl \
+      yum clean all
+# Needs to be splitted due to the other source
+RUN yum makecache && \
+      yum install --assumeyes \
+	devtoolset-9 && \
+      yum clean all
+
+RUN echo "source /opt/rh/devtoolset-9/enable" >> /etc/bashrc
+COPY condor_config.local /etc/condor/condor_config.local
+SHELL ["/bin/bash", "--login", "-c"]
+
+
+FROM base as CONDA
+ENV PATH /opt/conda/bin:$PATH
+# Leave these args here to better use the Docker build cache
+ARG CONDA_VERSION=py38_4.12.0
+
+RUN set -x && \
+    MINICONDA_URL="https://repo.anaconda.com/miniconda/Miniconda3-${CONDA_VERSION}-Linux-x86_64.sh" && \
+    wget "${MINICONDA_URL}" -O miniconda.sh -q && \
+    mkdir -p /opt && \
+    sh miniconda.sh -b -p /opt/conda && \
+    ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
+    echo "source /opt/conda/etc/profile.d/conda.sh" >> /etc/bashrc && \
+    echo "conda activate base" >> /etc/bashrc && \
+    find /opt/conda/ -follow -type f -name '*.a' -delete && \
+    find /opt/conda/ -follow -type f -name '*.js.map' -delete && \
+    /opt/conda/bin/conda clean -afy && \
+    rm /miniconda.sh
+RUN conda install -c conda-forge python-devtools numpy matplotlib tqdm python-htcondor && conda clean -afy
+RUN echo "source /opt/conda/etc/profile.d/conda.sh" >> /etc/bashrc
+
+
+
+
+
+
+
+
