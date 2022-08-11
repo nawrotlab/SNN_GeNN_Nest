@@ -26,9 +26,9 @@ is installed. The listed simulators in the tag are available in the image. We re
 We decided to not include the source code in the image as it would increase their size and make it harder to edit parameters and collect results. We use a bind-mount to mount the directory with the source code into the image. Unfortunately this creates some problems with the file permission. 
 
 Please follow the following steps to run the images:
-1) `chmod -R 777 SourceCodeFolder`
+1) `chmod -R 777 Source`
 2) `docker pull fschmitt/snn_genn_nest:Tag`
-3) `docker run --rm --gpus all --detach --mount type=bind,source=PATH to sourcecode,target=/Benchmark --name=NAME fschmitt/snn_genn_nest:genn`
+3) `docker run --rm --gpus all --detach --mount type=bind,source=PATH to sourcecode,target=/Benchmark --name=NAME fschmitt/snn_genn_nest:Tag`
 4) `docker exec -ti NAME /bin/bash`
 
 You can now enter the Benchmark folder and the subfolder of the different experiments. Now you can run the simulation by python SourceCode.py.
