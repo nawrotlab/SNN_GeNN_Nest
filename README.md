@@ -3,9 +3,19 @@ This repository contains all accompanying code to reproduce the figures of the f
 Felix Schmitt, Vahid Rostami, Martin Nawrot, **Efficient parameter calibration and real-time
 simulation of large scale spiking neural networks with GeNN and NEST**
 
-# UNDER CONSTRUCTION 
-this repository will be completed ASAP
+If you use any parts of this code for your own work, please acknowledge us by citing the above paper.
 
+If you have questions or encounter any problems while using this code base, feel free to file a Github issue here and we'll be in touch !
+
+# Project layout
+- Data/ contains all simulated data used for the figures of the paper except the spiking data of the gridsearch due to the limitation of filesize. It's split into data of the gridsearches, the simulations of small networks for long periods of time and the simulation of large networks.
+- Docker/ contains a build script for our supplied docker images to run the supplied source code without setting up the enviroment. We did not use these docker files to run our simulations
+- Figures/ containes the scripts togenerate the figures of the paper from the data and the generated figures
+- Source/ containes the Source code of the simulations.
+  - Helper/ contains classes for the clustered model in GeNN and NEST, the user speific GeNN models (Neuron models, current sources, ...) and a class to perform gridsearches. The classes of the clustered model can be run directly to test the software enviroment.
+  - Defaults/ contains the default parameters of the simulation. It consists of two induvidual files, one for the gridsearch and one for the independent simulatins. All values can be overwritten in the specific simulation scripts.
+  - Gridsearch_$Simulator$ contains the gridsearch with the specific $Simulator$ and a folder which contains neccessary scripts to submit the gridsearch as a jo to htcondor.
+  - Simulate_$Simulator$ contains the simulation script with the specific $Simulator$ and a folder which contains neccessary scripts to submit the jobs to reproduce the data of figure 3 and 4.
 
 # Docker Images
 We supply docker images to run our code without installing NEST and GeNN.
