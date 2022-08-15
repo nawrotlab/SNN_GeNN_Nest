@@ -23,23 +23,28 @@ Images can be found under: https://hub.docker.com/repository/docker/fschmitt/snn
 All images contain htcondor as a scheduler and an anconda basic installation. The images are not optimized like containers used in production environments. 
 
 The relevant tags to test our code are:
-- genn
-- nest
-- genn_nest
+- genn:           Image with htcondor and GeNN with single-threaded CPU support. GeNN is severly limited in this mode, but can be tested without a GPU.
+- nest            Image with htcondor and NEST with OpenMP multi-threading, no MPI
+- genn_nest       Image with htcondor and both simulators NEST(OpenMP multi-threading, no MPI) and GeNN (single-threaded CPU support)
 
-- gpu_genn
-- gpu_genn_nest
-- gpu_genn_nest 
+- gpu_genn        Image with htcondor and GeNN with full support of CPU and GPU. Cuda is installed.
+- gpu_genn_nest   Image with htcondor and NEST with OpenMP multi-threading, no MPI. Cuda is installed.
+- gpu_genn_nest   Image with htcondor and both simulators NEST(OpenMP multi-threading, no MPI) and GeNN (full support). Cuda is installed.
 
-All tags with a "gpu" prefix contain the CUDA drivers needed to use GeNN on the GPU. GPU drivers can be only used in Docker if the  nvidia-container-runtime
-is installed. The listed simulators in the tag are available in the image. We recommend using either the images with GPU support or the ones without as we had to change the base image for the GPU support and thus these two families do not share layers. 
+All tags with a "gpu" prefix contain the CUDA drivers needed to use GeNN on the GPU. GPU drivers can be only used in Docker if the  nvidia-container-runtime is installed. We recommend using either the images with GPU support or the ones without as we had to change the base image for the GPU support and thus these two families do not share layers. 
 We decided to not include the source code in the image as it would increase their size and make it harder to edit parameters and collect results. We use a bind-mount to mount the directory with the source code into the image. Unfortunately this creates some problems with the file permission. 
 
 Please follow the following steps to run the images:
-1) `chmod -R 777 Source`
-2) `docker pull fschmitt/snn_genn_nest:Tag`
-3) `docker run --rm --gpus all --detach --mount type=bind,source=PATH to sourcecode,target=/Benchmark --name=NAME fschmitt/snn_genn_nest:Tag`
-4) `docker exec -ti NAME /bin/bash`
+1) `git clone https://github.com/nawrotlab/SNN_GeNN_Nest.git`
+2) `chmod -R 777 Source`
+3)  select a TAG from the list above suitable to your needs and replace it in the following commands.
+4) `docker pull fschmitt/snn_genn_nest:TAG`
+5)  Replace `RepoPath/Source` with the abolute path to the Source directory in the cloned repository. You can also change the NAME an all following commands, if you like.
+6) `docker run --rm --gpus all --detach --mount type=bind,source=RepoPath/Source,target=/Benchmark --name=NAME fschmitt/snn_genn_nest:TAG`
+7) `docker exec -ti NAME /bin/bash`
+8) Test the code. You can exit the container by typing exit (if you switched to submituser you have to do this two times)
+9) If you have run some code and you're not member of the sudoers, please run `chmod -R 777 /Benchmark` from within the docker container. Otherwise you're not able to delete the files later on without restarting the container.
+10) `docker stop NAME` to stop the container after usage.
 
-You can now enter the Benchmark folder and the subfolder of the different experiments. Now you can run the simulation by python SourceCode.py.
+You can enter the Benchmark folder and the subfolder of the different experiments. Now you can run the simulation by python SourceCode.py.
 If you want to reproduce our results, please make sure all previously written data \*.pkl is writable by all users (`chmod 777 *.pkl`) and for GeNN simulation no folder EICluster_CODE exists (`rm -RI EICluster_CODE`). Now you can enter the appropriate CondorSubmission folder and run `su submituser`. Experiments can be scheduled by `python CondorSubmission.py`. By running `condor_q` you can see the currently scheduled jobs and by `condor_history` you get the information about finished jobs.
