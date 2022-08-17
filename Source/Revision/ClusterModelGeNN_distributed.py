@@ -205,7 +205,7 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
     CV=0.05
 
-    params = {'n_jobs': 24, 'N_E': 400, 'N_I': 100, 'dt': 0.1, 'neuron_type': 'iaf_psc_exp', 'simtime': 3000,
+    params = {'n_jobs': 24, 'N_E': 20000, 'N_I': 5000, 'dt': 0.1, 'neuron_type': 'iaf_psc_exp', 'simtime': 3000,
               'delta_I_xE': 0., 'delta_I_xI': 0., 'record_voltage': False, 'record_from': 1, 'warmup': 1000, 'Q': 20}
 
     jip_ratio = 0.75  # 0.75 default value  #works with 0.95 and gif wo adaptation
@@ -237,22 +237,25 @@ if __name__ == "__main__":
 
     # create histogram of synaptic times
     Cluster.model.synapse_populations['0EE0'].pull_var_from_device('expDecay')
+    Cluster.model.synapse_populations['0EI0'].pull_var_from_device('expDecay')
+    Cluster.model.synapse_populations['0IE0'].pull_var_from_device('expDecay')
+    Cluster.model.synapse_populations['0II0'].pull_var_from_device('expDecay')
     Tau_EE=-0.1/np.log(Cluster.model.synapse_populations['0EE0'].psm_vars['expDecay'].view)
     Tau_EI=-0.1/np.log(Cluster.model.synapse_populations['0EI0'].psm_vars['expDecay'].view)
     Tau_IE=-0.1/np.log(Cluster.model.synapse_populations['0IE0'].psm_vars['expDecay'].view)
     Tau_II=-0.1/np.log(Cluster.model.synapse_populations['0II0'].psm_vars['expDecay'].view)
     plt.figure()
     plt.subplot(2,2,1)
-    plt.hist(Tau_EE, bins=100, label='E->E')
+    plt.hist(Tau_EE, bins=20, label='E->E')
     plt.legend()
     plt.subplot(2,2,2)
-    plt.hist(Tau_EI, bins=100, label='I->E')
+    plt.hist(Tau_EI, bins=20, label='I->E')
     plt.legend()
     plt.subplot(2,2,3)
-    plt.hist(Tau_IE, bins=100, label='E->I')
+    plt.hist(Tau_IE, bins=20, label='E->I')
     plt.legend()
     plt.subplot(2,2,4)
-    plt.hist(Tau_II, bins=100, label='I->I')
+    plt.hist(Tau_II, bins=20, label='I->I')
     plt.legend()
     plt.savefig('Tau_hist.png')
     spiketimes = Cluster.simulate_and_get_recordings()
