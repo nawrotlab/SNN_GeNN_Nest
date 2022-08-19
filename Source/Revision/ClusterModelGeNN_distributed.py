@@ -7,7 +7,7 @@ from Helper import GeNN_Models
 from Helper import GeneralHelper
 from Helper import GeNNHelper
 from Helper import ClusterModelGeNN
-
+import shutil
 
 def UniformParameters(mean, CV):
     """ Uniform distribution parameters """
@@ -198,6 +198,9 @@ class ClusteredNetworkGeNN_Distributed(ClusterModelGeNN.ClusteredNetworkGeNN_Tim
                                                  )
         print('Js: ', js / np.sqrt(N))
 
+    def connect(self):
+        self.connect_uniform_distributed(0.05)
+
 
 if __name__ == "__main__":
     sys.path.append("..")
@@ -205,7 +208,7 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
     CV=0.05
 
-    params = {'n_jobs': 24, 'N_E': 20000, 'N_I': 5000, 'dt': 0.1, 'neuron_type': 'iaf_psc_exp', 'simtime': 3000,
+    params = {'n_jobs': 24, 'N_E': 72000, 'N_I': 16000, 'dt': 0.1, 'neuron_type': 'iaf_psc_exp', 'simtime': 9000,
               'delta_I_xE': 0., 'delta_I_xI': 0., 'record_voltage': False, 'record_from': 1, 'warmup': 1000, 'Q': 20}
 
     jip_ratio = 0.75  # 0.75 default value  #works with 0.95 and gif wo adaptation
@@ -216,13 +219,29 @@ if __name__ == "__main__":
     I_ths = [2.13, 1.24]  # set background stimulation baseline to 0
     params['I_th_E'] = I_ths[0]
     params['I_th_I'] = I_ths[1]
-    params['matrixType'] = "SPARSE_GLOBALG_INDIVIDUAL_PSM"
+
 
     # PROCEDURAL_GLOBALG_INDIVIDUAL_PSM
     # SPARSE_GLOBALG_INDIVIDUAL_PSM
+    params['matrixType'] = "SPARSE_GLOBALG"
+    EI_Network = ClusterModelGeNN.ClusteredNetworkGeNN_Timing(default, params, batch_size=1, NModel="LIF")
+    # Creates object which creates the EI clustered network in NEST
+    Result = EI_Network.get_simulation(timeout=10000)
+    del Result['spiketimes']
+    print(Result)
+    del EI_Network
+    shutil.rmtree("EICluster_CODE", ignore_errors=False, onerror=None)
 
+    params['matrixType'] = "SPARSE_GLOBALG_INDIVIDUAL_PSM"
+    EI_Network = ClusteredNetworkGeNN_Distributed(default, params, batch_size=1, NModel="LIF")
+    # Creates object which creates the EI clustered network in NEST
+    Result = EI_Network.get_simulation(timeout=10000)
+    del Result['spiketimes']
+    print(Result)
+    del EI_Network
+    shutil.rmtree("EICluster_CODE", ignore_errors=False, onerror=None)
 
-
+    params['matrixType'] = "SPARSE_GLOBALG_INDIVIDUAL_PSM"
     Cluster = ClusteredNetworkGeNN_Distributed(default, params, batch_size=1)
 
     # Name has to be changed because PyGeNN will be confused if two objects with the same reference are present
