@@ -3,6 +3,12 @@ import htcondor
 import shutil
 schedd = htcondor.Schedd()
 
+# Check whether the specified path exists or not
+isExist = os.path.exists("Logs")
+if not isExist:
+    # Create a new directory because it does not exist
+    os.makedirs("Logs")
+
 # Example Two: submit by adding attributes to the Submit() object
 sub = htcondor.Submit()
 sub['executable']=				'/Benchmark/Gridsearch_NEST/CondorSubmission/RunSimulation3.sh'

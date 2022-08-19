@@ -10,6 +10,12 @@ try:
 except:
 	print("No Data was written before!")
 
+# Check whether the specified path exists or not
+isExist = os.path.exists("Logs")
+if not isExist:
+    # Create a new directory because it does not exist
+    os.makedirs("Logs")
+
 LogBase="Logs/Log-$(ProcId).log"
 OutputBase="Logs/Simulation-$(ProcId).out"
 Errorbase="Logs/Error-$(ProcId).err"
