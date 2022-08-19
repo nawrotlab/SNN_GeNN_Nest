@@ -33,12 +33,20 @@ MatrixType=[0, 1]
 sizes=[50, 500]  #measured in 100 neurons
 times=[0, 1, 5, 10, 25, 50,100, 175, 350, 625, 1250, 2500]
 
+coll = htcondor.Collector()
+GPU=0
+CPU=0
+Slots=coll.query(htcondor.htcondor.AdTypes.Startd, projection=['CPUs', 'GPUs'])
+for ii in Slots:
+	GPU+=ii.get('GPUs')
+	CPU+=ii.get('CPUs')
+print("Total GPUs: ", GPU, ", Total CPUs: ", CPU)
 
 sub = htcondor.Submit()
 sub['executable']=              '/Benchmark/Simulate_Genn/CondorSubmission/RunSimulation.sh'
-sub['request_cpus']=            '20'
-sub['request_gpus']=                    '1'
-sub['request_memory']=                  '30GB'
+sub['request_cpus']=            str(CPU)
+sub['request_gpus']=                    str(GPU)
+sub['request_memory']=			'1GB'           #Memory requirement is not meaningful -> It will need more
 sub['should_transfer_files']=   'No'
 
 ii=0

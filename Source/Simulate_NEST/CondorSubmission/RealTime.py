@@ -36,7 +36,6 @@ print("Total GPUs: ", GPU, ", Total CPUs: ", CPU)
 
 sub = htcondor.Submit()
 sub['executable']=				'/Benchmark/Simulate_NEST/CondorSubmission/RunSimulation3.sh'
-
 sub['request_cpus']=            str(CPU)
 sub['request_gpus']= 			'0'
 sub['request_memory']=			'1GB'           #Memory requirement is not meaningful -> It will need more
