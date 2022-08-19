@@ -41,7 +41,7 @@ RUN set -x && \
     find /opt/conda/ -follow -type f -name '*.js.map' -delete && \
     /opt/conda/bin/conda clean -afy && \
     rm /miniconda.sh
-RUN conda install -c conda-forge python-devtools numpy matplotlib tqdm python-htcondor && conda clean -afy
+RUN conda install -c conda-forge python-devtools numpy matplotlib tqdm python-htcondor psutil && conda clean -afy
 RUN echo "source /opt/conda/etc/profile.d/conda.sh" >> /etc/bashrc
 
 

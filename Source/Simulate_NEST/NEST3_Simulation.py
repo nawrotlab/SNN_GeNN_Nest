@@ -6,6 +6,7 @@ import time
 sys.path.append("..")
 from Defaults import defaultSimulate as default
 from Helper import ClusterModelNEST
+import psutil
 
 if __name__ == '__main__':
 
@@ -36,11 +37,15 @@ if __name__ == '__main__':
 
     print("FactorSize: " + str(FactorSize) + " FactorTime: " + str(FactorTime))
 
+    CPUcount=psutil.cpu_count(logical = False)
+    if CPUcount>8:
+        CPUcount-=2
+
     startTime = time.time()
     baseline = {'N_E': 80, 'N_I': 20,  # number of E/I neurons -> typical 4:1
                 'simtime': 900, 'warmup': 100}
 
-    params = {'n_jobs': 24, 'N_E': FactorSize * baseline['N_E'], 'N_I': FactorSize * baseline['N_I'], 'dt': 0.1,
+    params = {'n_jobs': CPUcount, 'N_E': FactorSize * baseline['N_E'], 'N_I': FactorSize * baseline['N_I'], 'dt': 0.1,
               'neuron_type': 'iaf_psc_exp', 'simtime': FactorTime * baseline['simtime'], 'delta_I_xE': 0.,
               'delta_I_xI': 0., 'record_voltage': False, 'record_from': 1, 'warmup': FactorTime * baseline['warmup'],
               'Q': 20}
