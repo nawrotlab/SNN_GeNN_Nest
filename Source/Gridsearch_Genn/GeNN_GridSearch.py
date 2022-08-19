@@ -7,6 +7,7 @@ from Defaults import defaultGridsearch as default
 from Helper import Gridsearch
 from Helper import ClusterModelGeNN
 from Helper import GeNN_Models
+import psutil
 
 class ClusteredNetworkGeNN_Grid(ClusterModelGeNN.ClusteredNetworkGeNN_Timing):
 
@@ -57,8 +58,11 @@ if __name__ == '__main__':
 
     SpikeOutput = None
     startTime = time.time()
+    CPUcount=psutil.cpu_count(logical = False)
+    if CPUcount>8:
+        CPUcount-=2
 
-    params = {'n_jobs': 24, 'N_E': 20000, 'N_I': 5000, 'dt': 0.1, 'neuron_type': 'iaf_psc_exp', 'simtime': 9000,
+    params = {'n_jobs': CPUcount, 'N_E': 20000, 'N_I': 5000, 'dt': 0.1, 'neuron_type': 'iaf_psc_exp', 'simtime': 9000,
               'delta_I_xE': 0., 'delta_I_xI': 0., 'record_voltage': False, 'record_from': 1, 'warmup': 1000, 'Q': 20}
 
     jip_ratio = 0.75  # 0.75 default value  #works with 0.95 and gif wo adaptation

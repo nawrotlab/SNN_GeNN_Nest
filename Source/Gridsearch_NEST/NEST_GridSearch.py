@@ -7,6 +7,7 @@ sys.path.append("..")
 from Helper import GeneralHelper
 from Defaults import defaultGridsearch as default
 from Helper import Gridsearch
+import psutil
 
 # ********************************************************************************
 #                                    Function
@@ -55,8 +56,12 @@ def SimulateIX(params, IX, measurementVar, ID, PathOutput, lock, PathSpikes=None
 #######################################################################################################################################
 if __name__ == '__main__':
     startTime = time.time()
+    CPUcount=psutil.cpu_count(logical = False)
+    if CPUcount>8:
+        CPUcount-=2
 
-    params = {'n_jobs': 4, 'N_E': 20000, 'N_I': 5000, 'dt': 0.1, 'neuron_type': 'iaf_psc_exp', 'simtime': 9000,
+    CPUsperJob=4
+    params = {'n_jobs': CPUsperJob, 'N_E': 20000, 'N_I': 5000, 'dt': 0.1, 'neuron_type': 'iaf_psc_exp', 'simtime': 9000,
               'delta_I_xE': 0., 'delta_I_xI': 0., 'record_voltage': False, 'record_from': 1, 'warmup': 1000, 'Q': 20}
 
     jip_ratio = 0.75  # 0.75 default value  #works with 0.95 and gif wo adaptation
@@ -88,7 +93,7 @@ if __name__ == '__main__':
     )
 
     Grid = Gridsearch.Gridsearch_NEST(SimulateIX, params, Constructor, measurementVar, default,
-                                      PathOutput='Test.pkl', Nworkers=6)
+                                      PathOutput='Test.pkl', Nworkers=CPUcount//CPUsperJob)
     Grid.search(ProgressBar=True)
     times = Grid.getTiming()
     endTime = time.time()
