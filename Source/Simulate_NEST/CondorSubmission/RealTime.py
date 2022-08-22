@@ -6,9 +6,9 @@ schedd = htcondor.Schedd()
 Outputpath="NEST_TimeSim_Size_RT.pkl"
 
 try:
-	os.remove("/Benchmark/Simulate_NEST/"+Outputpath)
+    os.remove("/Benchmark/Simulate_NEST/"+Outputpath)
 except:
-	print("No Data was written before!")
+    print("No Data was written before!")
 
 # Check whether the specified path exists or not
 isExist = os.path.exists("Logs")
@@ -28,11 +28,10 @@ times=[10]
 coll = htcondor.Collector()
 GPU=0
 CPU=0
-Slots=coll.query(htcondor.htcondor.AdTypes.Startd, projection=['CPUs', 'GPUs'])
+Slots=coll.query(htcondor.htcondor.AdTypes.Startd, projection=['CPUs'])
 for ii in Slots:
-	GPU+=ii.get('GPUs')
-	CPU+=ii.get('CPUs')
-print("Total GPUs: ", GPU, ", Total CPUs: ", CPU)
+    CPU+=ii.get('CPUs')
+print("Total CPUs: ", CPU)
 
 sub = htcondor.Submit()
 sub['executable']=				'/Benchmark/Simulate_NEST/CondorSubmission/RunSimulation3.sh'

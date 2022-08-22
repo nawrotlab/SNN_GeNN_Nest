@@ -14,8 +14,11 @@ GPU=0
 CPU=0
 Slots=coll.query(htcondor.htcondor.AdTypes.Startd, projection=['CPUs', 'GPUs'])
 for ii in Slots:
-	GPU+=ii.get('GPUs')
-	CPU+=ii.get('CPUs')
+    try:
+        GPU+=ii.get('GPUs')
+    except TypeError:
+        pass
+    CPU+=ii.get('CPUs')
 print("Total GPUs: ", GPU, ", Total CPUs: ", CPU)
 
 # Example Two: submit by adding attributes to the Submit() object
@@ -26,7 +29,7 @@ sub['output']=                  'Logs/Simulation.out'
 sub['error']=                   'Logs/Error.err'
 sub['request_cpus']=            str(CPU)
 sub['request_gpus']=                    str(GPU)
-sub['request_memory']=			'1GB'           #Memory requirement is not meaningful -> It will need more
+sub['request_memory']=            '1GB'           #Memory requirement is not meaningful -> It will need more
 sub['should_transfer_files']=   'No'
 
 ii=1

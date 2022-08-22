@@ -10,13 +10,11 @@ if not isExist:
     os.makedirs("Logs")
 
 coll = htcondor.Collector()
-GPU=0
 CPU=0
-Slots=coll.query(htcondor.htcondor.AdTypes.Startd, projection=['CPUs', 'GPUs'])
+Slots=coll.query(htcondor.htcondor.AdTypes.Startd, projection=['CPUs'])
 for ii in Slots:
-	GPU+=ii.get('GPUs')
-	CPU+=ii.get('CPUs')
-print("Total GPUs: ", GPU, ", Total CPUs: ", CPU)
+    CPU+=ii.get('CPUs')
+print("Total CPUs: ", CPU)
 
 # Example Two: submit by adding attributes to the Submit() object
 sub = htcondor.Submit()
@@ -30,6 +28,6 @@ sub['should_transfer_files']=   'No'
 
 
 with schedd.transaction() as txn:
-	sub.queue(txn)
+    sub.queue(txn)
 
 print("Submitted 1 Job to queue!")

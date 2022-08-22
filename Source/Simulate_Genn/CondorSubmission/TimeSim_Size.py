@@ -40,8 +40,11 @@ GPU=0
 CPU=0
 Slots=coll.query(htcondor.htcondor.AdTypes.Startd, projection=['CPUs', 'GPUs'])
 for ii in Slots:
-	GPU+=ii.get('GPUs')
-	CPU+=ii.get('CPUs')
+    try:
+        GPU+=ii.get('GPUs')
+    except TypeError:
+        pass
+    CPU+=ii.get('CPUs')
 print("Total GPUs: ", GPU, ", Total CPUs: ", CPU)
 
 sub = htcondor.Submit()

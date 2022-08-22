@@ -6,9 +6,9 @@ schedd = htcondor.Schedd()
 Outputpath="NEST_TimeBiol_sim.pkl"
 
 try:
-	os.remove("/Benchmark/Simulate_NEST/"+Outputpath)
+    os.remove("/Benchmark/Simulate_NEST/"+Outputpath)
 except:
-	print("No Data was written before!")
+    print("No Data was written before!")
 
 # Check whether the specified path exists or not
 isExist = os.path.exists("Logs")
@@ -30,11 +30,10 @@ times=[0, 1, 5, 10, 25, 50,100, 175, 350, 625, 1250, 2500]
 coll = htcondor.Collector()
 GPU=0
 CPU=0
-Slots=coll.query(htcondor.htcondor.AdTypes.Startd, projection=['CPUs', 'GPUs'])
+Slots=coll.query(htcondor.htcondor.AdTypes.Startd, projection=['CPUs'])
 for ii in Slots:
-	GPU+=ii.get('GPUs')
-	CPU+=ii.get('CPUs')
-print("Total GPUs: ", GPU, ", Total CPUs: ", CPU)
+    CPU+=ii.get('CPUs')
+print("Total CPUs: ", CPU)
 
 sub = htcondor.Submit()
 sub['executable']=				'/Benchmark/Simulate_NEST/CondorSubmission/RunSimulation3.sh'
@@ -46,15 +45,15 @@ ii=0
 
 
 for size in sizes:
-	for jj in range(Trials):
-		for matType in MatrixType:	
-			for time in times:
-				sub['arguments']=str(size) + " " + str(time) + " " + str(matType) + " " + Outputpath
-				sub['log']=LogBase.replace("$(ProcId)", str(ii))                  
-                sub['output']=OutputBase.replace("$(ProcId)", str(ii))                 
+    for jj in range(Trials):
+        for matType in MatrixType:
+            for time in times:
+                sub['arguments']=str(size) + " " + str(time) + " " + str(matType) + " " + Outputpath
+                sub['log']=LogBase.replace("$(ProcId)", str(ii))
+                sub['output']=OutputBase.replace("$(ProcId)", str(ii))
                 sub['error']=Errorbase.replace("$(ProcId)", str(ii))        
-				ii+=1
-				with schedd.transaction() as txn:
-				  sub.queue(txn)
+                ii+=1
+                with schedd.transaction() as txn:
+                  sub.queue(txn)
 
 print("Submitted " + str(ii) + " Jobs to queue.")
