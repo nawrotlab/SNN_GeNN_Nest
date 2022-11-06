@@ -36,7 +36,6 @@ def SimulateIX(params, IX_all, measurementVar, ID_all, PathOutput, lock, PathSpi
         TimePreSim=EI_Network.simulate_nest()
         spiketimes=EI_Network.get_recordings(TimePreSim)
         e_rate, i_rate=EI_Network.get_firing_rates(spiketimes)
-        print(e_rate)
         Result={'e_rate': e_rate, 'i_rate': i_rate, 'Timing': EI_Network.get_timing(), 'params': EI_Network.get_parameter(),
                     'spiketimes': spiketimes}
         startDump = time.time()
@@ -71,8 +70,8 @@ if __name__ == '__main__':
     #    CPUcount-=2
 
     CPUsperJob=CPUcount
-    params = {'n_jobs': CPUsperJob, 'N_E': 20000, 'N_I': 5000, 'dt': 0.1, 'neuron_type': 'iaf_psc_exp', 'simtime': 900,
-              'delta_I_xE': 0., 'delta_I_xI': 0., 'record_voltage': False, 'record_from': 1, 'warmup': 100, 'Q': 20}
+    params = {'n_jobs': CPUsperJob, 'N_E': 20000, 'N_I': 5000, 'dt': 0.1, 'neuron_type': 'iaf_psc_exp', 'simtime': 9000,
+              'delta_I_xE': 0., 'delta_I_xI': 0., 'record_voltage': False, 'record_from': 1, 'warmup': 1000, 'Q': 20}
 
     jip_ratio = 0.75  # 0.75 default value  #works with 0.95 and gif wo adaptation
     jep = 2.75  # clustering strength
