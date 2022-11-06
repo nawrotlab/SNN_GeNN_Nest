@@ -4,6 +4,12 @@ import time
 import numpy as np
 from Helper import GeneralHelper
 
+from itertools import islice
+
+def chunk(it, size):
+    it = iter(it)
+    return iter(lambda: tuple(islice(it, size)), ())
+
 
 class ParamField:
     """
@@ -223,7 +229,7 @@ class Gridsearch_NEST(Gridsearch):
         endInitGrid = time.time()
         self.Timing = {'InitGrid': endInitGrid - startInitGrid}
 
-    def search(self, ProgressBar=False):
+    def search(self, ProgressBar=False, ReuseSimulation=False):
         """
         Run the Gridsearch and set the timing information.
         Arguments:
@@ -231,6 +237,7 @@ class Gridsearch_NEST(Gridsearch):
         """
         from pathos.multiprocessing import ProcessPool
         import multiprocessing
+        import numpy as np
         Queue=None
         Parameterlist = []
         rv, Parm, Ids = self.ParamField.AllSample()
@@ -247,10 +254,14 @@ class Gridsearch_NEST(Gridsearch):
             LQeueTM1=0
             pbar = tqdm(total=numberSamples)
 
-
-        with ProcessPool(nodes=self.Parameter['Nworker']) as p:
-            TimesL = p.amap(lambda x: self.SimulationFunction(self.Parameter, x[0], self.measurementVar, x[1],
-                                                             self.OutputPath, lock, PathSpikes=self.SpikesPath, timeout=7200, Queue=Queue), Parameterlist)
+        if ReuseSimulation:
+            with ProcessPool(nodes=self.Parameter['Nworker']) as p:
+                TimesL = p.amap(lambda x: self.SimulationFunction(self.Parameter, x, self.measurementVar, x,
+                                                    self.OutputPath, lock, PathSpikes=self.SpikesPath, timeout=7200, Queue=Queue), [Parameterlist])
+        else:
+            with ProcessPool(nodes=self.Parameter['Nworker']) as p:
+                TimesL = p.amap(lambda x: self.SimulationFunction(self.Parameter, x[0], self.measurementVar, x[1],
+                                                    self.OutputPath, lock, PathSpikes=self.SpikesPath, timeout=7200, Queue=Queue), Parameterlist)
 
         if ProgressBar:
             while TimesL.ready() is False:
