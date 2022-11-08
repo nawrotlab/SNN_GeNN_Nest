@@ -28,7 +28,7 @@ The relevant tags to test our code are:
 - genn_nest       Image with htcondor and both simulators NEST(OpenMP multi-threading, no MPI) and GeNN (single-threaded CPU support)
 
 - gpu_genn        Image with htcondor and GeNN with full support of CPU and GPU. Cuda is installed.
-- gpu_genn_nest   Image with htcondor and NEST with OpenMP multi-threading, no MPI. Cuda is installed.
+- gpu_nest        Image with htcondor and NEST with OpenMP multi-threading, no MPI. Cuda is installed.
 - gpu_genn_nest   Image with htcondor and both simulators NEST(OpenMP multi-threading, no MPI) and GeNN (full support). Cuda is installed.
 
 All tags with a "gpu" prefix contain the CUDA drivers needed to use GeNN on the GPU. GPU drivers can be only used in Docker if the  nvidia-container-runtime is installed. We recommend using either the images with GPU support or the ones without as we had to change the base image for the GPU support and thus these two families do not share layers. 
