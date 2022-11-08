@@ -39,7 +39,7 @@ Please follow the following steps to run the images:
 2) `chmod -R 777 Source`
 3)  select a TAG from the list above suitable to your needs and replace it in the following commands.
 4) `docker pull fschmitt/snn_genn_nest:TAG`
-5)  Replace `RepoPath/Source` with the abolute path to the Source directory in the cloned repository. You can also change the NAME an all following commands, if you like.
+5)  Replace `RepoPath/Source` with the abolute path to the Source directory in the cloned repository. You can also change the NAME in all following commands, if you like.
 6) GPU: `docker run --rm --gpus all --detach --mount type=bind,source=RepoPath/Source,target=/Benchmark --name=NAME fschmitt/snn_genn_nest:TAG`
 6) No-GPU: `docker run --detach --mount type=bind,source=RepoPath/Source,target=/Benchmark --name=NAME fschmitt/snn_genn_nest:TAG`
 7) `docker exec -ti NAME /bin/bash`
