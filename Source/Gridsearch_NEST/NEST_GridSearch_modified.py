@@ -33,6 +33,7 @@ def SimulateIX(params, IX_all, measurementVar, ID_all, PathOutput, lock, PathSpi
         EI_Network.reset_I_x()
         EI_Network.reinitalizeStateVariables()
         EI_Network.set_I_x(I_XE=IX[0][0], I_XI=IX[1][0])
+        EI_Network.reset_RecordingDevice()
         TimePreSim=EI_Network.simulate_nest()
         spiketimes=EI_Network.get_recordings(TimePreSim)
         e_rate, i_rate=EI_Network.get_firing_rates(spiketimes)
@@ -97,8 +98,8 @@ if __name__ == '__main__':
 
 
     Constructor = (
-        ('Ix', [GlobE(0.95000000000001 + 0.05 * ii) for ii in range(10)], ('I_X_E',)),
-        ('Ix', [GlobI(0.70000000000001 + 0.025 * ii) for ii in range(10)], ('I_X_I',)),
+        ('Ix', [GlobE(0.95000000000001 + 0.05 * ii) for ii in range(40)], ('I_X_E',)),
+        ('Ix', [GlobI(0.70000000000001 + 0.025 * ii) for ii in range(40)], ('I_X_I',)),
     )
 
     Grid = Gridsearch.Gridsearch_NEST(SimulateIX, params, Constructor, measurementVar, default,

@@ -496,6 +496,9 @@ class ClusteredNetworkNEST_Timing(ClusteredNetworkNEST):
             I_e_loc = I_pop.get('I_e')
             I_pop.set({'I_e': np.array(I_e_loc) + I_XI})
 
+    def reset_RecordingDevice(self):
+        self.RecordingDevices[0].n_events = 0
+
 
     def reset_I_x(self):
         """
